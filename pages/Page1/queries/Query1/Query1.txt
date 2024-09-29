@@ -1,0 +1,4 @@
+{
+    "country": {{Select1.selectedOptionLabel}},
+    "description":{{Input1.text}}
+}

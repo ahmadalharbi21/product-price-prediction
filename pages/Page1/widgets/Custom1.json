@@ -1,0 +1,79 @@
+{
+  "Fetch_data": "{{ \n  Query1.run().then(() => {\n    console.log(\"Query1 data:\", Query1.data);\n    storeValue('queryData', Query1.data).then(() => {\n      showAlert(\"Stored queryData: \" + JSON.stringify(Query1.data), \"success\");\n    }).catch((error) => {\n      showAlert(\"Error storing data: \" + error.message, \"error\");\n    });\n  }).catch((error) => {\n    showAlert(\"Query error: \" + error.message, \"error\");\n  });\n}}\n",
+  "backgroundColor": "#FFFFFF",
+  "borderColor": "#E0DEDE",
+  "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+  "borderWidth": "1",
+  "bottomRow": 72,
+  "boxShadow": "{{appsmith.theme.boxShadow.appBoxShadow}}",
+  "defaultModel": "{\n  \"queryData\": \"{{appsmith.store.queryData.predicted_unit_price}}\",\n  \"country\": \"{{Select1.selectedOptionLabel}}\",\n  \"product_description\": \"{{Input1.text}}\"\n}\n",
+  "dynamicBindingPathList": [
+    {
+      "key": "theme"
+    },
+    {
+      "key": "borderRadius"
+    },
+    {
+      "key": "boxShadow"
+    },
+    {
+      "key": "defaultModel"
+    }
+  ],
+  "dynamicHeight": "FIXED",
+  "dynamicPropertyPathList": [
+    {
+      "key": "Fetch_data"
+    }
+  ],
+  "dynamicTriggerPathList": [
+    {
+      "key": "onResetClick"
+    },
+    {
+      "key": "Fetch_data"
+    }
+  ],
+  "events": [
+    "onResetClick",
+    "Fetch_data"
+  ],
+  "isCanvas": false,
+  "isLoading": false,
+  "isSearchWildcard": true,
+  "isVisible": true,
+  "key": "l0u3vthrvz",
+  "leftColumn": 3,
+  "maxDynamicHeight": 9000,
+  "minDynamicHeight": 4,
+  "mobileBottomRow": 78,
+  "mobileLeftColumn": 12,
+  "mobileRightColumn": 35,
+  "mobileTopRow": 48,
+  "needsErrorInfo": false,
+  "onResetClick": "{{showAlert('Successfully reset!!', '');}}",
+  "originalBottomRow": 73,
+  "originalTopRow": 39,
+  "parentColumnSpace": 14.203125,
+  "parentId": "0",
+  "parentRowSpace": 10,
+  "renderMode": "CANVAS",
+  "rightColumn": 57,
+  "srcDoc": {
+    "css": ".app {\n  width: calc(1px * var(--appsmith-ui-width));\n  justify-content: center;\n  border-radius: 0px;\n  border: none;\n}\n.app .tip-container {\n  margin-bottom: 20px;\n}\n.app .tip-container h2 {\n  margin-bottom: 20px;\n  font-size: 16px;\n  font-weight: 700;\n}\n.app .tip-container .tip-header {\n  display: flex;\n  justify-content: space-between;\n  align-items: baseline;\n}\n.app .tip-container .tip-header div {\n  color: #999;\n}\n.app .button-container {\n  text-align: right;\n}\n.app .button-container button {\n  margin: 0 10px;\n  border-radius: var(--appsmith-theme-borderRadius) !important;\n}\n.app .button-container button.primary {\n  background: var(--appsmith-theme-primaryColor) !important;\n}\n.app .button-container button.reset:not([disabled]) {\n  color: var(--appsmith-theme-primaryColor) !important;\n  border-color: var(--appsmith-theme-primaryColor) !important;\n}",
+    "html": "<!-- no need to write html, head, body tags, it is handled by the widget -->\n<div id=\"root\"></div>\n",
+    "js": "import React from 'https://cdn.jsdelivr.net/npm/react@18.2.0/+esm';\nimport reactDom from 'https://cdn.jsdelivr.net/npm/react-dom@18.2.0/+esm';\nimport { Button, Card, Spin } from 'https://cdn.jsdelivr.net/npm/antd@5.11.1/+esm';\nfunction Custom1() {\n  const [loading, setLoading] = React.useState(false);\n  const [data, setData] = React.useState(null);\n\n  // Fetch values from appsmith.model, passed via Default Model\n  const country = appsmith.model.country || \"Unknown Country\";\n  const productDescription = appsmith.model.product_description || \"Unknown Product\";\n  console.log(\"Country:\", country);\n  console.log(\"Product Description:\", productDescription);\n\n  // This function will trigger the 'Fetch_data' event and reset the widget\n  const handleFetchData = () => {\n    console.log(\"Fetching new data...\");\n\n    // Clear previous data and show the spinner\n    setData(null); // Clear the previous number\n    setLoading(true); // Show the loading spinner\n\n    // Trigger the event named 'Fetch_data' to run the query\n    appsmith.triggerEvent('Fetch_data');\n\n    // Wait for appsmith.model to be updated with query data\n    const checkForData = setInterval(() => {\n      // Ensure appsmith.model is defined before accessing queryData\n      if (appsmith.model && appsmith.model.queryData) {\n        const modelData = appsmith.model.queryData;\n        console.log(\"Checking appsmith.model for queryData:\", modelData);\n\n        // Treat the string data as the final predicted price\n        if (modelData) {\n          const predictedPrice = parseFloat(modelData); // Convert string to float\n          const formattedPrice = `$${predictedPrice.toFixed(2)}`; // Format to 2 decimal places\n\n          console.log(\"Formatted price:\", formattedPrice);\n          setData(formattedPrice); // Set the formatted data\n          setLoading(false); // Stop loading when the new data arrives\n          clearInterval(checkForData); // Stop polling once data is found\n        } else {\n          console.log(\"Still waiting for data in appsmith.model.queryData...\");\n        }\n      } else {\n        console.log(\"appsmith.model.queryData is not available yet...\");\n      }\n    }, 1000); // Check every second for data in the model\n  };\n  return /*#__PURE__*/React.createElement(Card, {\n    style: {\n      padding: '20px',\n      minHeight: '100vh',\n      boxSizing: 'border-box'\n    }\n  }, /*#__PURE__*/React.createElement(\"div\", {\n    style: {\n      marginBottom: '20px'\n    }\n  }, /*#__PURE__*/React.createElement(Button, {\n    onClick: handleFetchData // Call handleFetchData on button click\n    ,\n    type: \"primary\",\n    style: {\n      width: '100%',\n      marginBottom: '20px',\n      fontSize: '16px'\n    }\n  }, \"Predict\")), loading ? /*#__PURE__*/React.createElement(\"div\", {\n    style: {\n      textAlign: 'center'\n    }\n  }, /*#__PURE__*/React.createElement(Spin, {\n    tip: \"Loading new data...\"\n  })) : /*#__PURE__*/React.createElement(\"div\", {\n    style: {\n      textAlign: 'center',\n      marginTop: '20px'\n    }\n  }, /*#__PURE__*/React.createElement(\"div\", {\n    style: {\n      fontSize: '36px',\n      fontWeight: 'bold',\n      color: '#333'\n    }\n  }, data !== null ? data : 'No data fetched yet.'), data !== null && /*#__PURE__*/React.createElement(\"div\", {\n    style: {\n      marginTop: '20px',\n      fontSize: '16px',\n      color: '#555'\n    }\n  }, /*#__PURE__*/React.createElement(\"p\", null, \"The predicted price for \", /*#__PURE__*/React.createElement(\"strong\", null, productDescription), \" in \", /*#__PURE__*/React.createElement(\"strong\", null, country), \" is \", /*#__PURE__*/React.createElement(\"strong\", null, data), \".\"), /*#__PURE__*/React.createElement(\"p\", null, \"This value is predicted by using a machine learning model based on previous pricing data and product details.\"))));\n}\n\n// Initialize the component inside appsmith.onReady()\nappsmith.onReady(() => {\n  console.log(\"App is ready, rendering Custom1...\");\n  reactDom.render( /*#__PURE__*/React.createElement(Custom1, null), document.getElementById(\"root\"));\n});"
+  },
+  "theme": "{{appsmith.theme}}",
+  "topRow": 38,
+  "type": "CUSTOM_WIDGET",
+  "uncompiledSrcDoc": {
+    "css": ".app {\n  width: calc(1px * var(--appsmith-ui-width));\n  justify-content: center;\n  border-radius: 0px;\n  border: none;\n  \n  .tip-container {\n    margin-bottom: 20px;\n\n    h2 {\n      margin-bottom: 20px;\n      font-size: 16px;\n      font-weight: 700;\n    }\n\n    .tip-header {\n      display: flex;\n      justify-content: space-between;\n      align-items: baseline;\n\n      div {\n        color: #999;\n      }\n    }\n  }\n\t\n\t.button-container {\n      text-align: right;\n\n      button {\n        margin: 0 10px;\n        border-radius: var(--appsmith-theme-borderRadius) !important;\n\n        &.primary {\n          background: var(--appsmith-theme-primaryColor) !important;\n        }\n\n        &.reset:not([disabled]) {\n          color: var(--appsmith-theme-primaryColor) !important;\n          border-color: var(--appsmith-theme-primaryColor) !important;\n        }\n      }\n    }\n}\n",
+    "html": "<!-- no need to write html, head, body tags, it is handled by the widget -->\n<div id=\"root\"></div>\n",
+    "js": "import React from 'https://cdn.jsdelivr.net/npm/react@18.2.0/+esm';\nimport reactDom from 'https://cdn.jsdelivr.net/npm/react-dom@18.2.0/+esm';\nimport { Button, Card, Spin } from 'https://cdn.jsdelivr.net/npm/antd@5.11.1/+esm';\n\nfunction Custom1() {\n  const [loading, setLoading] = React.useState(false);\n  const [data, setData] = React.useState(null);\n\n  // Fetch values from appsmith.model, passed via Default Model\n  const country = appsmith.model.country || \"Unknown Country\";\n  const productDescription = appsmith.model.product_description || \"Unknown Product\";\n\n  console.log(\"Country:\", country);\n  console.log(\"Product Description:\", productDescription);\n  \n  // This function will trigger the 'Fetch_data' event and reset the widget\n  const handleFetchData = () => {\n    console.log(\"Fetching new data...\");\n\n    // Clear previous data and show the spinner\n    setData(null);  // Clear the previous number\n    setLoading(true); // Show the loading spinner\n\n    // Trigger the event named 'Fetch_data' to run the query\n    appsmith.triggerEvent('Fetch_data');\n\n    // Wait for appsmith.model to be updated with query data\n    const checkForData = setInterval(() => {\n      // Ensure appsmith.model is defined before accessing queryData\n      if (appsmith.model && appsmith.model.queryData) {\n        const modelData = appsmith.model.queryData;\n        console.log(\"Checking appsmith.model for queryData:\", modelData);\n\n        // Treat the string data as the final predicted price\n        if (modelData) {\n          const predictedPrice = parseFloat(modelData);  // Convert string to float\n          const formattedPrice = `$${predictedPrice.toFixed(2)}`;  // Format to 2 decimal places\n          \n          console.log(\"Formatted price:\", formattedPrice);\n          setData(formattedPrice);  // Set the formatted data\n          setLoading(false);  // Stop loading when the new data arrives\n          clearInterval(checkForData);  // Stop polling once data is found\n        } else {\n          console.log(\"Still waiting for data in appsmith.model.queryData...\");\n        }\n      } else {\n        console.log(\"appsmith.model.queryData is not available yet...\");\n      }\n    }, 1000); // Check every second for data in the model\n  };\n\n  return (\n    <Card style={{ padding: '20px', minHeight: '100vh', boxSizing: 'border-box' }}>\n      <div style={{ marginBottom: '20px' }}>\n        <Button\n          onClick={handleFetchData} // Call handleFetchData on button click\n          type=\"primary\"\n          style={{ width: '100%', marginBottom: '20px', fontSize: '16px' }}\n        >\n          Predict\n        </Button>\n      </div>\n\n      {loading ? (\n        <div style={{ textAlign: 'center' }}>\n          <Spin tip=\"Loading new data...\" />\n        </div>\n      ) : (\n        <div style={{ textAlign: 'center', marginTop: '20px' }}>\n          <div style={{ fontSize: '36px', fontWeight: 'bold', color: '#333' }}>\n            {data !== null ? data : 'No data fetched yet.'}\n          </div>\n\n          {/* Add custom message below the predicted price */}\n          {data !== null && (\n            <div style={{ marginTop: '20px', fontSize: '16px', color: '#555' }}>\n              <p>The predicted price for <strong>{productDescription}</strong> in <strong>{country}</strong> is <strong>{data}</strong>.</p>\n              <p>This value is predicted by using a machine learning model based on previous pricing data and product details.</p>\n            </div>\n          )}\n        </div>\n      )}\n    </Card>\n  );\n}\n\n// Initialize the component inside appsmith.onReady()\nappsmith.onReady(() => {\n  console.log(\"App is ready, rendering Custom1...\");\n  reactDom.render(<Custom1 />, document.getElementById(\"root\"));\n});\n"
+  },
+  "version": 1,
+  "widgetId": "17uyj9lief",
+  "widgetName": "Custom1"
+}
